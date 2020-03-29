@@ -32,17 +32,24 @@
                     align="center">
             </el-table-column>
             <el-table-column
+                    label="是否启用"
+                    align="center">
+                <template v-slot="scope">
+                    <el-switch
+                            v-model="scope.row.isSwitch"
+                            :active-value="true"
+                            :inactive-value="false"
+                            active-color="#13ce66"
+                            inactive-color="#ff4949"
+                            @change="changeSwitch(scope.row)"/>
+                </template>
+            </el-table-column>
+            <el-table-column
                     label="操作"
                     align="center">
                 <template v-slot="scope">
                     <el-button size="mini" type="primary" @click="editUserInfo(scope.row)">编辑</el-button>
                     <el-button size="mini" type="danger" @click="deleteUserInfo(scope.row)" style="margin-right: 5px">删除</el-button>
-                    <el-switch
-                            v-model="isSwitch"
-                            active-color="#13ce66"
-                            inactive-color="#ff4949">
-                    </el-switch>
-
                     <!-- Form -->
                     <el-dialog title="用户信息" :visible.sync="dialogFormVisible" width="30%" :close-on-click-modal="false">
                         <el-form :model="userForm">
@@ -104,14 +111,12 @@
                     email: ''
                 },
                 dialogFormVisible: false,
-                formLabelWidth: '60px',
-                isSwitch: true
+                formLabelWidth: '60px'
             }
         },
         created() {
             // 初始化查询所有用户
             this.getAllUser()
-
         },
         watch: {
             'pageParam.pageTotal': {
@@ -128,6 +133,23 @@
             }
         },
         methods: {
+            changeSwitch(row){
+                const id = row.id
+                const isSwitch = row.isSwitch
+                console.log('row: ', row)
+                console.log('id: ', id)
+                console.log('isSwitch: ', isSwitch)
+                axios.put("http://localhost:8080/user/updateSwitch/" + id + "/" + isSwitch)
+                    .then(res => {
+                        if (res.data.code == 200) {
+                            this.$refs.common.messageTips(1000, '是否启动: 更新成功', 'success')
+                        } else {
+                            this.$refs.common.messageTips(1000, '是否启动: 更新失败', 'error')
+                        }
+                    })
+                    .catch(err => {})
+
+            },
             handleSelectionChange(val) {
                 console.log(val);
                 this.multipleSelection = val;
@@ -138,30 +160,34 @@
                 //显示弹框
                 this.dialogFormVisible = true;
                 axios.get("http://localhost:8080/user/findUser/" + row.id)
-                .then(res => {
-                    if (res.data.code == 200) {
-                        this.userForm = res.data.data
-                        console.log(this.userForm);
-                        this.$refs.common.messageTips(1000, '查询用户成功', 'success')
-                    } else {
-                        this.$refs.common.messageTips(1000, '未找到用户信息', 'error')
-                    }
-                })
+                    .then(res => {
+                        if (res.data.code == 200) {
+                            this.userForm = res.data.data
+                            console.log(this.userForm);
+                            this.$refs.common.messageTips(1000, '查询用户成功', 'success')
+                        } else {
+                            this.$refs.common.messageTips(1000, '未找到用户信息', 'error')
+                        }
+                    })
 
             },
             confirmDialogForm() {
                 this.dialogFormVisible = false
                     axios.put("http://localhost:8080/user/update", this.userForm)
-                    .then(res => {
-                        if (res.data.code == 200) {
-                            this.userForm = res.data.data
-                            this.$refs.common.messageTips(1000, '更新用户成功', 'success')
-                        } else {
-                            this.$refs.common.messageTips(1000, '更新用户失败', 'error')
-                        }
-                    }).catch(err => {
-                        this.$refs.common.messageTips(1000, err, 'error')
-                    })
+                        .then(res => {
+                            if (res.data.code == 200) {
+                                this.userForm = res.data.data
+                                this.$refs.common.messageTips(1000, '更新用户成功', 'success')
+                                return Promise.resolve()
+                            } else {
+                                this.$refs.common.messageTips(1000, '更新用户失败', 'error')
+                                return Promise.reject(res)
+                            }
+                        })
+                        .then(this.getAllUser())
+                        .catch(err => {
+                            this.$refs.common.messageTips(1000, err, 'error')
+                        })
             },
             cacelDialogForm() {
                 this.dialogFormVisible = false
@@ -200,6 +226,7 @@
                             this.userTableData = response.data.data.list
                             this.pageParam.pageTotal = response.data.data.total
                             console.log("getAllUser.tableData: ", this.userTableData)
+                            console.log('response: ', response);
                         }
                     })
                     .catch(error => {
