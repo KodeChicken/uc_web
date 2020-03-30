@@ -14,6 +14,7 @@
             <el-table-column
                     prop="id"
                     label="编号"
+                    width="50px"
                     align="center">
             </el-table-column>
             <el-table-column
@@ -33,6 +34,7 @@
             </el-table-column>
             <el-table-column
                     label="是否启用"
+                    width="70px"
                     align="center">
                 <template v-slot="scope">
                     <el-switch
@@ -46,6 +48,7 @@
             </el-table-column>
             <el-table-column
                     label="操作"
+                    width="150px"
                     align="center">
                 <template v-slot="scope">
                     <el-button size="mini" type="primary" @click="editUserInfo(scope.row)">编辑</el-button>

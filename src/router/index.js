@@ -3,11 +3,12 @@ import VueRouter from 'vue-router'
 
 import UserList from "../views/user/UserList";
 import AclAdmin from "../views/user/AclAdmin";
-import Index from "../views/user/Index";
+import Index from "../views/Index";
 
 
 import PageThree from "../views/PageThree";
 import PageFour from "../views/PageFour";
+import PageFive from "../views/PageFive";
 
 Vue.use(VueRouter)
 
@@ -31,8 +32,8 @@ const routes = [
     ]
   },
   {
-    path: '/navigation',
-    name: '导航2',
+    path: '/navigation1',
+    name: '导航1',
     component: Index,
     children: [
       {
@@ -46,8 +47,20 @@ const routes = [
         component: PageFour
       }
     ]
-  }
+  },
+  {
+    path: '/navigation2',
+    name: '导航2',
+    component: Index,
+    children: [
+      {
+        path: '/pageFive',
+        name: '页面5',
+        component: PageFive
+      }
 
+    ]
+  }
 
 ]
 

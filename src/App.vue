@@ -4,27 +4,12 @@
     </div>
 </template>
 
-<style>
-
-    .el-header {
-        background-color: #ecf5ff;
-        color: #333;
-        line-height: 60px;
-    }
-
-    .el-aside {
-        color: #333;
-        background-color: #fff;
+<style lang="scss">
+    #app {
+        height: 100vh;
     }
     body {
         margin: 0;
-    }
-    html, body, #app, .el-container {
-        height: 100%!important;
-    }
-
-    .messageTips {
-        width: ;
     }
 </style>
 
