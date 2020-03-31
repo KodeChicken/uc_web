@@ -7,6 +7,7 @@
             <el-header>
                 <common-header />
             </el-header>
+            <common-tab />
             <el-main>
                 <router-view />
             </el-main>
@@ -17,7 +18,7 @@
 <script>
     import CommonHeader from "../components/CommonHeader";
     import CommonAside from "../components/CommonAside";
-
+    import CommonTab from "../components/CommonTab";
     export default {
         data() {
             return {
@@ -25,7 +26,8 @@
         },
         components: {
             CommonHeader,
-            CommonAside
+            CommonAside,
+            CommonTab
         }
     }
 </script>
@@ -43,4 +45,5 @@
         color: #333;
         background-color: #fff;
     }
+
 </style>

@@ -12,14 +12,14 @@
                             :index="subItem.path"
                             v-for="(subItem, index) in item.children"
                             :key="index"
-                            :style="$route.path == subItem.path ? 'color: #ffd04b;' : ''">
+                            :style="$route.path == subItem.path ? 'color: #ffd04b;' : ''" @click="clickMenu(subItem)">
                         <i :class="'el-icon-' + subItem.icon"></i>
                         <span slot="title"> {{subItem.label}}</span>
                     </el-menu-item>
                 </el-menu-item-group>
             </el-submenu>
             <el-menu-item :index="item.path" v-for="item in noChildren" :key="item.path"
-                          :class="$route.path == item.path ? 'is-active' : ''">
+                          :class="$route.path == item.path ? 'is-active' : ''" @click="clickMenu(item)">
                 <i :class="'el-icon-' + item.icon"></i>
                 <span slot="title">{{item.label}}</span>
             </el-menu-item>
@@ -42,16 +42,19 @@
                 asideMenu: [
                     {
                         path: '/',
-                        label: '用户管理',
+                        label: '首页',
+                        name: 'home',
                         icon: 'menu',
                         children: [
                             {
                                 path: '/userList',
+                                name: 'userList',
                                 label: '用户列表',
                                 icon: 'user'
                             },
                             {
                                 path: '/aclAdmin',
+                                name: 'aclAdmin',
                                 label: '权限管理',
                                 icon: 's-operation'
                             }
@@ -60,15 +63,18 @@
                     {
                         path: '/navigation1',
                         label: '导航1',
+                        name: 'navigation1',
                         icon: 's-flag',
                         children: [
                             {
                                 path: '/pageThree',
+                                name: 'pageThree',
                                 label: '页面3',
                                 icon: 'setting'
                             },
                             {
                                 path: '/pageFour',
+                                name: 'pageFour',
                                 label: '页面4',
                                 icon: 'setting'
                             }
@@ -76,11 +82,13 @@
                     },
                     {
                         path: '/navigation2',
+                        name: 'navigation2',
                         label: '导航2',
                         icon: 's-data',
                         children: [
                             {
                                 path: '/pageFive',
+                                name: 'pageFive',
                                 label: '页面5',
                                 icon: 'setting'
                             }
@@ -89,6 +97,13 @@
                 ]
             }
         },
+        methods: {
+            clickMenu(item) {
+                this.$store.commit('selectMenu', item)
+            }
+
+
+        }
 
     }
 </script>

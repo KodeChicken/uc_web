@@ -15,7 +15,7 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: '用户管理',
+    name: '首页',
     component: Index,
     redirect: '/userList',
     children: [

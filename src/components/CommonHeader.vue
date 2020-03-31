@@ -4,9 +4,9 @@
             <div class="l-content">
                 <el-breadcrumb separator="/" style="border-right: none" width="200px">
                     <el-breadcrumb-item :to="{path: '/'}">首页</el-breadcrumb-item>
-                    <el-breadcrumb-item ><a href="/">活动管理</a></el-breadcrumb-item>
-                    <el-breadcrumb-item>活动列表</el-breadcrumb-item>
-                    <el-breadcrumb-item>活动详情</el-breadcrumb-item>
+                    <el-breadcrumb-item v-if="current" style="color: #fff;">
+                        <router-link :to="current.path">{{current.label}}</router-link>
+                    </el-breadcrumb-item>
                 </el-breadcrumb>
             </div>
 
@@ -28,7 +28,13 @@
 </template>
 
 <script>
+    import {mapState} from 'vuex'
     export default {
+        computed: {
+            ...mapState({
+                current: state => state.tab.currentMenu
+            })
+        },
         data() {
             return {
                 // breadList: [
@@ -76,6 +82,7 @@
         justify-content: space-between;
 
     }
+
     .profileClass {
         .userImg {
             width: 40px;
@@ -95,6 +102,13 @@
 </style>
 
 <style lang="scss">
-
+    .el-breadcrumb__item {
+        .el-breadcrumb__inner {
+            color: #fff;
+        }
+        &:last-child {
+            color: #fff;
+        }
+    }
 
 </style>
