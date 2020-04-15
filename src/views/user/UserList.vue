@@ -38,7 +38,7 @@
                     align="center">
                 <template v-slot="scope">
                     <el-switch
-                            v-model="scope.row.isSwitch"
+                            v-model="scope.row.open"
                             :active-value="true"
                             :inactive-value="false"
                             active-color="#13ce66"
@@ -118,7 +118,6 @@
             }
         },
         created() {
-            // 初始化查询所有用户
             this.getAllUser()
         },
         watch: {
@@ -138,11 +137,11 @@
         methods: {
             changeSwitch(row){
                 const id = row.id
-                const isSwitch = row.isSwitch
+                const open = row.open
                 console.log('row: ', row)
                 console.log('id: ', id)
-                console.log('isSwitch: ', isSwitch)
-                axios.put("http://localhost:8080/user/updateSwitch/" + id + "/" + isSwitch)
+                console.log('open: ', open)
+                axios.put('/user/updateOpen/' + id + '/' + open)
                     .then(res => {
                         if (res.data.code == 200) {
                             this.$refs.common.messageTips(1000, '是否启动: 更新成功', 'success')
@@ -162,7 +161,7 @@
                 console.log(row.id);
                 //显示弹框
                 this.dialogFormVisible = true;
-                axios.get("http://localhost:8080/user/findUser/" + row.id)
+                axios.get('/user/findUser/' + row.id)
                     .then(res => {
                         if (res.data.code == 200) {
                             this.userForm = res.data.data
@@ -176,7 +175,7 @@
             },
             confirmDialogForm() {
                 this.dialogFormVisible = false
-                    axios.put("http://localhost:8080/user/update", this.userForm)
+                    axios.put('/user/update', this.userForm)
                         .then(res => {
                             if (res.data.code == 200) {
                                 this.userForm = res.data.data
@@ -229,6 +228,7 @@
                             this.userTableData = response.data.data.list
                             this.pageParam.pageTotal = response.data.data.total
                             console.log("getAllUser.tableData: ", this.userTableData)
+                            console.log('getAllUser.token: ', window.localStorage.getItem("token"))
                             console.log('response: ', response);
                         }
                     })

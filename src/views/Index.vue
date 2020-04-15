@@ -1,15 +1,15 @@
 <template>
     <el-container style="height: 100%">
         <el-aside width="200px" style="background-color: rgba(158, 153, 158, 1);">
-            <common-aside />
+            <common-aside :navMenus="menuList"></common-aside>
         </el-aside>
         <el-container>
             <el-header>
-                <common-header />
+                <common-header/>
             </el-header>
-            <common-tab />
+<!--            <common-tab/>-->
             <el-main>
-                <router-view />
+                <router-view/>
             </el-main>
         </el-container>
     </el-container>
@@ -22,12 +22,26 @@
     export default {
         data() {
             return {
+                menuList: []
+            }
+        },
+
+        created() {
+            this.findMenuTree()
+        },
+        methods: {
+            findMenuTree() {
+                axios.post('/user/curMenus').then(res => {
+                    // this.$store.commit('setMenus', res.data.data)
+                    this.menuList = res.data.data
+                    console.log('this.menuList: ', this.menuList)
+                }).catch(err => {console.log('err')})
             }
         },
         components: {
             CommonHeader,
             CommonAside,
-            CommonTab
+            // CommonTab
         }
     }
 </script>

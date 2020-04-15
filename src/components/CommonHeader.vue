@@ -1,14 +1,14 @@
 <template>
     <header>
         <el-header style="text-align: right; font-size: 12px">
-            <div class="l-content">
-                <el-breadcrumb separator="/" style="border-right: none" width="200px">
-                    <el-breadcrumb-item :to="{path: '/'}">首页</el-breadcrumb-item>
-                    <el-breadcrumb-item v-if="current" style="color: #fff;">
-                        <router-link :to="current.path">{{current.label}}</router-link>
-                    </el-breadcrumb-item>
-                </el-breadcrumb>
-            </div>
+<!--            <div class="l-content">-->
+<!--                <el-breadcrumb separator="/" style="border-right: none" width="200px">-->
+<!--                    <el-breadcrumb-item :to="{path: '/'}">首页</el-breadcrumb-item>-->
+<!--                    <el-breadcrumb-item v-if="current" style="color: #fff;">-->
+<!--                        <router-link :to="current.path">{{current.label}}</router-link>-->
+<!--                    </el-breadcrumb-item>-->
+<!--                </el-breadcrumb>-->
+<!--            </div>-->
 
             <div class="profileClass">
                 <el-dropdown trigger="click" size="mini">
@@ -28,31 +28,14 @@
 </template>
 
 <script>
-    import {mapState} from 'vuex'
     export default {
-        computed: {
-            ...mapState({
-                current: state => state.tab.currentMenu
-            })
-        },
         data() {
             return {
-                // breadList: [
-                //     {path: '/userList', name: '用户列表'}
-                // ],
-                // bread: {
-                //     path: '',
-                //     name: ''
-                // },
                 userImg: require('../assets/headPortrait.jpeg')
             }
         },
-        watch: {
-            // $route() {
-            //     this.getBreadCrumb()
-            // }
-        },
         methods: {
+            // TODO: 该方法可过滤掉重复的面包屑值
             // getBreadCrumb() {
             //     const aaa = {
             //         path: this.$route.fullPath,

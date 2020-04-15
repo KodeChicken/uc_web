@@ -1,67 +1,37 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+import CommonLogin from "../components/CommonLogin";
 import UserList from "../views/user/UserList";
 import AclAdmin from "../views/user/AclAdmin";
 import Index from "../views/Index";
-
-
-import PageThree from "../views/PageThree";
-import PageFour from "../views/PageFour";
-import PageFive from "../views/PageFive";
 
 Vue.use(VueRouter)
 
 const routes = [
   {
+    path: '/pub/login',
+    name: 'login',
+    component: CommonLogin
+  },
+  {
     path: '/',
-    name: '首页',
+    name: 'index',
     component: Index,
-    redirect: '/userList',
+    // redirect: '/sys/users',
     children: [
       {
-        path: '/userList',
-        name: '用户列表',
+        path: '/sys/users',
+        name: 'userList',
         component: UserList,
       },
       {
         path: '/aclAdmin',
-        name: '权限管理',
+        name: 'aclAdmin',
         component: AclAdmin
       }
     ]
-  },
-  {
-    path: '/navigation1',
-    name: '导航1',
-    component: Index,
-    children: [
-      {
-        path: '/pageThree',
-        name: '页面3',
-        component: PageThree
-      },
-      {
-        path: '/pageFour',
-        name: '页面4',
-        component: PageFour
-      }
-    ]
-  },
-  {
-    path: '/navigation2',
-    name: '导航2',
-    component: Index,
-    children: [
-      {
-        path: '/pageFive',
-        name: '页面5',
-        component: PageFive
-      }
-
-    ]
   }
-
 ]
 
 const router = new VueRouter({
@@ -69,5 +39,21 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
+
+router.beforeEach(( to, from, next ) => {
+
+  if (to.path == "/pub/login") {
+     return next()
+  }
+  let token = window.localStorage.getItem("token")
+
+  if (!token) {
+    return next("/pub/login")
+  }
+  return next()
+})
+
+
+
 
 export default router
