@@ -12,13 +12,13 @@
                     align="center">
             </el-table-column>
             <el-table-column
-                    prop="id"
+                    prop="sort"
                     label="编号"
                     width="50px"
                     align="center">
             </el-table-column>
             <el-table-column
-                    prop="name"
+                    prop="fullName"
                     label="姓名"
                     align="center">
             </el-table-column>
@@ -33,12 +33,22 @@
                     align="center">
             </el-table-column>
             <el-table-column
+                    prop="phone"
+                    label="联系方式"
+                    align="center">
+            </el-table-column>
+            <el-table-column
+                    prop="email"
+                    label="邮箱"
+                    align="center">
+            </el-table-column>
+            <el-table-column
                     label="是否启用"
                     width="70px"
                     align="center">
                 <template v-slot="scope">
                     <el-switch
-                            v-model="scope.row.open"
+                            v-model="scope.row.status"
                             :active-value="true"
                             :inactive-value="false"
                             active-color="#13ce66"
@@ -57,7 +67,7 @@
                     <el-dialog title="用户信息" :visible.sync="dialogFormVisible" width="30%" :close-on-click-modal="false">
                         <el-form :model="userForm">
                             <el-form-item label="名称" :label-width="formLabelWidth">
-                                <el-input v-model="userForm.name" autocomplete="off"></el-input>
+                                <el-input v-model="userForm.fullname" autocomplete="off"></el-input>
                             </el-form-item>
                             <el-form-item label="密码" :label-width="formLabelWidth">
                                 <el-input v-model="userForm.password" autocomplete="off"></el-input>
@@ -137,11 +147,11 @@
         methods: {
             changeSwitch(row){
                 const id = row.id
-                const open = row.open
+                const status = row.status
                 console.log('row: ', row)
                 console.log('id: ', id)
-                console.log('open: ', open)
-                axios.put('/user/updateOpen/' + id + '/' + open)
+                console.log('status: ', status)
+                axios.put('/user/updateStatus/' + id + '/' + status)
                     .then(res => {
                         if (res.data.code == 200) {
                             this.$refs.common.messageTips(1000, '是否启动: 更新成功', 'success')

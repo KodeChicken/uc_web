@@ -46,6 +46,7 @@
                         alert('submit!');
                         axios.post('/pub/login', this.loginInfo)
                             .then(res => {
+                                debugger
                                     console.log(res.data.data.sessionId)
                                     console.log('user.menus', res.data.data.menus)
                                     window.localStorage.setItem("token", res.data.data.sessionId)
@@ -53,7 +54,7 @@
                                     this.$router.push({name: 'index'});
 
                             }).catch(err => {
-
+                                console.log(err)
                         })
 
                     } else {

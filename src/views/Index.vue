@@ -31,7 +31,7 @@
         },
         methods: {
             findMenuTree() {
-                axios.post('/user/curMenus').then(res => {
+                axios.post('/pub/curMenus').then(res => {
                     // this.$store.commit('setMenus', res.data.data)
                     this.menuList = res.data.data
                     console.log('this.menuList: ', this.menuList)

@@ -10,12 +10,12 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/pub/login',
+    path: '/',
     name: 'login',
     component: CommonLogin
   },
   {
-    path: '/',
+    path: '/index',
     name: 'index',
     component: Index,
     // redirect: '/sys/users',
@@ -41,14 +41,15 @@ const router = new VueRouter({
 })
 
 router.beforeEach(( to, from, next ) => {
-
-  if (to.path == "/pub/login") {
-     return next()
+  debugger;
+  if (to.path == "/") {
+      window.localStorage.setItem("token", "")
+      return next()
   }
   let token = window.localStorage.getItem("token")
 
   if (!token) {
-    return next("/pub/login")
+    return next("/")
   }
   return next()
 })

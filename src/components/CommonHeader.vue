@@ -16,7 +16,7 @@
                     <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item icon="el-icon-plus">个人中心</el-dropdown-item>
                         <el-dropdown-item icon="el-icon-circle-plus">修改密码</el-dropdown-item>
-                        <el-dropdown-item icon="el-icon-check">注销</el-dropdown-item>
+                        <el-dropdown-item icon="el-icon-check" @click.native="logout">注销</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
                 <div class="userName">
@@ -48,6 +48,14 @@
             //         item.some(i => i[path] == next[path]) ? item : [...item, next], [])
             //     console.log('getbreadCurmb1: ', this.breadList)
             // }
+            logout() {
+                axios.get('/logout').then(res => {
+                    debugger
+                    alert("logout")
+                    console.log('logout', res)}).catch(err => console.log(err))
+
+        }
+
         },
     }
 </script>
