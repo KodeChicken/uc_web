@@ -50,7 +50,6 @@
             // }
             logout() {
                 axios.get('/logout').then(res => {
-                    debugger
                     alert("logout")
                     console.log('logout', res)}).catch(err => console.log(err))
 

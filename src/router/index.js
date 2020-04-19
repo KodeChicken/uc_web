@@ -10,15 +10,15 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
+    path: '/login',
     name: 'login',
     component: CommonLogin
   },
   {
-    path: '/index',
+    path: '/',
     name: 'index',
     component: Index,
-    // redirect: '/sys/users',
+    redirect: '/sys/users',
     children: [
       {
         path: '/sys/users',
@@ -41,15 +41,14 @@ const router = new VueRouter({
 })
 
 router.beforeEach(( to, from, next ) => {
-  debugger;
-  if (to.path == "/") {
-      window.localStorage.setItem("token", "")
+  if (to.path == "/login") {
+      window.localStorage.setItem("Authorization", "")
       return next()
   }
-  let token = window.localStorage.getItem("token")
+  let token = window.localStorage.getItem("Authorization")
 
   if (!token) {
-    return next("/")
+    return next("/login")
   }
   return next()
 })

@@ -8,38 +8,36 @@ import Qs from 'qs';
 // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
 axios.defaults.baseURL = 'http://localhost:8080/api';
 // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
-// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+// axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8';
 
 let config = {
-  // baseURL: process.env.baseURL || process.env.apiUrl || ""
-  // timeout: 60 * 1000, // Timeout
-  // withCredentials: true, // Check cross-site Access-Control
-
-  timeout: 60 * 1000,
-  // transformRequest: [function (data, headers) {
-  //       // Do whatever you want to transform the data
-  //       return Qs.stringify({
-  //           ...data
-  //       });
-  // }],
-
-
+    // baseURL: process.env.baseURL || process.env.apiUrl || ""
+    // timeout: 60 * 1000, // Timeout
+    withCredentials: true, // Check cross-site Access-Control
+    timeout: 60 * 1000,
+    // headers: {
+    //
+    // },
+    // transformRequest: [function (data) {
+    //       // Do whatever you want to transform the data
+    //       return Qs.stringify({
+    //           ...data
+    //       });
+    // }]
 };
 
 const _axios = axios.create(config);
 
-
-
 _axios.interceptors.request.use(
   function(config) {
     // Do something before request is sent
-    let token = window.localStorage.getItem("token");
-    console.log('config.token ',token);
+    let token = window.localStorage.getItem("Authorization");
+    console.log('requestInterceptors==>Authorization ',token);
     if (token) {
       //将token放到请求头发送给服务器,将tokenkey放在请求头中
-      config.headers.token = token;
+      // config.headers.Authorization = token;
       //也可以这种写法
-      // config.headers['accessToken'] = Token;
+      config.headers['Authorization'] = token;
     }
     return config;
   },

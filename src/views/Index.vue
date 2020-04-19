@@ -31,11 +31,11 @@
         },
         methods: {
             findMenuTree() {
-                axios.post('/pub/curMenus').then(res => {
+                axios.post('/user/curMenus').then(res => {
                     // this.$store.commit('setMenus', res.data.data)
                     this.menuList = res.data.data
                     console.log('this.menuList: ', this.menuList)
-                }).catch(err => {console.log('err')})
+                }).catch(err => {console.log(err)})
             }
         },
         components: {

@@ -31,7 +31,10 @@
 <script>
     export default {
         name: 'CommonAsideItem',
-        props: ['item']
+        props: ['item'],
+        created() {
+            console.log("item:", this.item)
+        }
     }
 </script>
 

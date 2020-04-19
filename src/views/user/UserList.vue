@@ -12,13 +12,7 @@
                     align="center">
             </el-table-column>
             <el-table-column
-                    prop="sort"
-                    label="编号"
-                    width="50px"
-                    align="center">
-            </el-table-column>
-            <el-table-column
-                    prop="fullName"
+                    prop="username"
                     label="姓名"
                     align="center">
             </el-table-column>
@@ -49,8 +43,9 @@
                 <template v-slot="scope">
                     <el-switch
                             v-model="scope.row.status"
-                            :active-value="true"
-                            :inactive-value="false"
+                            :active-value="1"
+                            :disabled="false"
+                            :inactive-value="0"
                             active-color="#13ce66"
                             inactive-color="#ff4949"
                             @change="changeSwitch(scope.row)"/>
@@ -231,14 +226,14 @@
             },
             // 分页查询用户
             getAllUser() {
-                axios.get("http://localhost:8080/user/findAll/"
+                axios.get("user/findAll/"
                     + this.pageParam.pageNum + "/" + this.pageParam.pageSize)
                     .then(response => {
                         if (response.data.code == 200) {
                             this.userTableData = response.data.data.list
                             this.pageParam.pageTotal = response.data.data.total
                             console.log("getAllUser.tableData: ", this.userTableData)
-                            console.log('getAllUser.token: ', window.localStorage.getItem("token"))
+                            console.log('getAllUser.Authorization: ', window.localStorage.getItem("Authorization"))
                             console.log('response: ', response);
                         }
                     })

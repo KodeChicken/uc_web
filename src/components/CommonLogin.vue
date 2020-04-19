@@ -46,12 +46,11 @@
                         alert('submit!');
                         axios.post('/pub/login', this.loginInfo)
                             .then(res => {
-                                debugger
                                     console.log(res.data.data.sessionId)
                                     console.log('user.menus', res.data.data.menus)
-                                    window.localStorage.setItem("token", res.data.data.sessionId)
-                                    console.log('tokenItem: ', window.localStorage.getItem("token"))
-                                    this.$router.push({name: 'index'});
+                                    window.localStorage.setItem("Authorization", res.data.data.sessionId)
+                                    console.log('login==>Authorization: ', window.localStorage.getItem("Authorization"))
+                                    this.$router.push('/');
 
                             }).catch(err => {
                                 console.log(err)
