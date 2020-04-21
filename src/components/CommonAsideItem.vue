@@ -33,7 +33,6 @@
         name: 'CommonAsideItem',
         props: ['item'],
         created() {
-            console.log("item:", this.item)
         }
     }
 </script>

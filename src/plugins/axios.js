@@ -13,7 +13,9 @@ axios.defaults.baseURL = 'http://localhost:8080/api';
 let config = {
     // baseURL: process.env.baseURL || process.env.apiUrl || ""
     // timeout: 60 * 1000, // Timeout
-    withCredentials: true, // Check cross-site Access-Control
+    // 我们的客户端和服务端交互的时候使用的是 token，通过 Authorization头发送到服务端，
+    // 并没有使用到 cookie，所以客户端没有必要设置 withCredentials: true
+    withCredentials: false, // Check cross-site Access-Control
     timeout: 60 * 1000,
     // headers: {
     //

@@ -33,8 +33,14 @@
             findMenuTree() {
                 axios.post('/user/curMenus').then(res => {
                     // this.$store.commit('setMenus', res.data.data)
-                    this.menuList = res.data.data
-                    console.log('this.menuList: ', this.menuList)
+                    if (res.data.code == 603) {
+                        window.localStorage.setItem("Authorization", "")
+                        console.log('/user/curMenus==>Authorization: ', window.localStorage.getItem("Authorization"))
+                        this.$router.push('/login');
+                    } else {
+                        this.menuList = res.data.data
+                        console.log('this.menuList: ', this.menuList)
+                    }
                 }).catch(err => {console.log(err)})
             }
         },

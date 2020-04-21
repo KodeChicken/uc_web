@@ -132,8 +132,11 @@
                         && this.pageParam.pageTotal != 0) {
                         this.pageParam.pageNum -= 1;
                     }
-                    //获取列表数据
-                    this.getAllUser();
+                    // 判断pageTotal的值是否未改变，避免重复调用getAllUser方法
+                    if (this.pageParam.pageTotal != value) {
+                        //获取列表数据
+                        this.getAllUser();
+                    }
                 },
                 // pageTotal首次赋值不触发watch
                 immediate: false
