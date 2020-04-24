@@ -94,12 +94,10 @@
                 @current-change="pageChange"
                 @size-change="sizeChange">
         </el-pagination>
-        <common ref="common"></common>
     </div>
 </template>
 
 <script>
-    import Common from "../../common/Common";
     export default {
         data() {
             return {
@@ -152,9 +150,9 @@
                 axios.put('/user/updateStatus/' + id + '/' + status)
                     .then(res => {
                         if (res.data.code == 200) {
-                            this.$refs.common.messageTips(1000, '是否启动: 更新成功', 'success')
+                            this.$utils.messageTips(1000, '是否启动: 更新成功', 'success')
                         } else {
-                            this.$refs.common.messageTips(1000, '是否启动: 更新失败', 'error')
+                            this.$utils.messageTips(1000, '是否启动: 更新失败', 'error')
                         }
                     })
                     .catch(err => {})
@@ -174,9 +172,9 @@
                         if (res.data.code == 200) {
                             this.userForm = res.data.data
                             console.log(this.userForm);
-                            this.$refs.common.messageTips(1000, '查询用户成功', 'success')
+                            this.$utils.messageTips(1000, '查询用户成功', 'success')
                         } else {
-                            this.$refs.common.messageTips(1000, '未找到用户信息', 'error')
+                            this.$utils.messageTips(1000, '未找到用户信息', 'error')
                         }
                     })
 
@@ -187,16 +185,16 @@
                         .then(res => {
                             if (res.data.code == 200) {
                                 this.userForm = res.data.data
-                                this.$refs.common.messageTips(1000, '更新用户成功', 'success')
+                                this.$utils.messageTips(1000, '更新用户成功', 'success')
                                 return Promise.resolve()
                             } else {
-                                this.$refs.common.messageTips(1000, '更新用户失败', 'error')
+                                this.$utils.messageTips(1000, '更新用户失败', 'error')
                                 return Promise.reject(res)
                             }
                         })
                         .then(this.getAllUser())
                         .catch(err => {
-                            this.$refs.common.messageTips(1000, err, 'error')
+                            this.$utils.messageTips(1000, err, 'error')
                         })
             },
             cacelDialogForm() {
@@ -238,33 +236,32 @@
                             console.log("getAllUser.tableData: ", this.userTableData)
                             console.log('getAllUser.Authorization: ', window.localStorage.getItem("Authorization"))
                             console.log('response: ', response);
+                            this.$utils.messageTips(1000, '获取用户列表success', 'success')
                         }
                     })
                     .catch(error => {
-                        this.$refs.common.messageTips(1000, '获取用户列表失败', 'error')
+                        this.$utils.messageTips(1000, '获取用户列表失败', 'error')
                     })
             },
             // 根据用户id删除用户
             deleteUserById(row) {
-                this.$refs.common.confirmTips(row.name, '提示').then(() => {
+                this.$utils.confirmTips(row.name, '提示').then(() => {
                     axios.delete("http://localhost:8080/user/delete/" + row.id)
                         .then(response => {
                             console.log(response.data.msg);
                             if (response.data.code == 200) {
-                                this.$refs.common.messageTips(1000, '删除用户成功', 'success')
+                                this.$utils.messageTips(1000, '删除用户成功', 'success')
                                 if (this.pageParam.pageTotal != response.data.data) {
                                     this.pageParam.pageTotal = response.data.data
                                 }
                             }
                         })
                         .catch(error => {
-                            this.$refs.common.messageTips(1000, '删除用户失败', 'error')
+                            this.$utils.messageTips(1000, '删除用户失败', 'error')
                         })
                 }).catch(() => {})
             }
-        },
-        components: {
-            Common,
         }
+
     }
 </script>

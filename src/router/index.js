@@ -41,12 +41,15 @@ const router = new VueRouter({
 })
 
 router.beforeEach(( to, from, next ) => {
-  if (to.path == "/login") {
-      window.localStorage.setItem("Authorization", "")
-      return next()
-  }
   let token = window.localStorage.getItem("Authorization")
-
+  if (to.path == "/login") {
+    if (token) {
+      this.$utils.notifyTipsInfo(1000, '已登录，已勿重复跳转登录页面', 'center')
+      return next(from.path)
+    }
+    window.localStorage.setItem("Authorization", "")
+    return next()
+  }
   if (!token) {
     return next("/login")
   }

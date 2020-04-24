@@ -3,7 +3,6 @@
         <!--  TODO: navMenu的name是英文的，用于路由的跳转，alias属性用于中文的别名      -->
             <el-menu
                     router
-                    :default-openeds="['0', '1']"
                     background-color="#545c64"
                     text-color="#rgb(19, 9, 9)"
                     active-text-color="green">
@@ -25,6 +24,7 @@
             CommonAsideItem
         },
         created() {
+            console.log('6666', this.$route.path);
         },
         methods: {
 

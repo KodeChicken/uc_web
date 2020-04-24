@@ -1,13 +1,13 @@
 <template>
     <div v-if="item.childrens">
         <template v-if="item.childrens.length == 0">
-            <el-menu-item :index="item.uri">
+            <el-menu-item :index="item.componentName == null ? '' : item.componentName">
                 <i class="el-icon-menu"></i>
                 {{item.name}}
             </el-menu-item>
         </template>
 
-        <el-submenu v-else :index="item.uri">
+        <el-submenu v-else :index="item.componentName == null ? '' : item.componentName">
             <template slot="title" >
                 <i class="el-icon-menu"></i>
                 {{item.name}}
@@ -18,7 +18,9 @@
                         v-if="child.childrens && child.childrens.length > 0"
                         :item="child"
                         :key="child.id"/>
-                <el-menu-item v-else :key="child.id" :index="child.uri" :class="$route.path == child.uri ? 'is-active' : ''">
+                <el-menu-item v-else :key="child.id"
+                              :index="child.componentName == null ? '' : child.componentName"
+                              :class="$route.path == child.uri ? 'is-active' : ''">
                     <i class="el-icon-location"></i>
                     {{child.name}}
                 </el-menu-item>
