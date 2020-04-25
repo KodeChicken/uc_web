@@ -48,66 +48,66 @@ _axios.interceptors.request.use(
 
 // Add a response interceptor
 _axios.interceptors.response.use(
-    function(response) {
-        debugger
-        // Do something with response data
-        return response;
-    },
-    function(error) {
-        debugger
-        // Do something with response error
-        return Promise.reject(error);
-    }
-    // response => {
+    // function(response) {
     //     debugger
-    //     if (response.data.code === 200) {
-    //         return Promise.resolve(response)
-    //     } else {
-    //         return response
-    //     }
+    //     // Do something with response data
+    //     return response;
     // },
-    // error => {
+    // function(error) {
     //     debugger
-    //     if (error.response.data.code) {
-    //         switch (error.response.data.code) {
-    //             // 401: 未登录
-    //             // 未登录则跳转登录页面，并携带当前页面的路径
-    //             // 在登录成功后返回当前页面，这一步需要在登录页操作。
-    //             case 401:
-    //                 this.$router.replace({
-    //                     path: '/login',
-    //                     query: {redirect: this.$router.currentRoute.fullPath}
-    //                 })
-    //                 break;
-    //             // 403 token过期
-    //             // 登录过期对用户进行提示
-    //             // 清除本地token和清空vuex中token对象
-    //             // 跳转登录页面
-    //             case 603:
-    //                 _this.$message.error('登录过期，请重新登录')
-    //                 // 清除token
-    //                 localStorage.removeItem('Authorization')
-    //                 // 跳转登录页面，并将要浏览的页面fullPath传过去，登录成功后跳转需要访问的页面
-    //                 setTimeout(() => {
-    //                     this.$router.replace({
-    //                         path: '/login',
-    //                         query: {
-    //                             redirect: this.$router.currentRoute.fullPath
-    //                         }
-    //                     })
-    //                 }, 1000)
-    //                 break;
-    //             // 404请求不存在
-    //             case 404:
-    //                 _this.$message.error('网络请求不存在')
-    //                 break;
-    //             // 其他错误，直接抛出错误提示
-    //             default:
-    //                 _this.$message.error(error.response.data.msg)
-    //         }
-    //         return Promise.reject(error.response)
-    //     }
+    //     // Do something with response error
+    //     return Promise.reject(error);
     // }
+    response => {
+        debugger
+        if (response.data.code === 200) {
+            return Promise.resolve(response)
+        } else {
+            return Promise.reject(response)
+        }
+    },
+    error => {
+        debugger
+        if (error.response.data.code) {
+            switch (error.response.data.code) {
+                // 401: 未登录
+                // 未登录则跳转登录页面，并携带当前页面的路径
+                // 在登录成功后返回当前页面，这一步需要在登录页操作。
+                case 401:
+                    this.$router.replace({
+                        path: '/login',
+                        query: {redirect: this.$router.currentRoute.fullPath}
+                    })
+                    break;
+                // 403 token过期
+                // 登录过期对用户进行提示
+                // 清除本地token和清空vuex中token对象
+                // 跳转登录页面
+                case 603:
+                    _this.$message.error('登录过期，请重新登录')
+                    // 清除token
+                    localStorage.removeItem('Authorization')
+                    // 跳转登录页面，并将要浏览的页面fullPath传过去，登录成功后跳转需要访问的页面
+                    setTimeout(() => {
+                        this.$router.replace({
+                            path: '/login',
+                            query: {
+                                redirect: this.$router.currentRoute.fullPath
+                            }
+                        })
+                    }, 1000)
+                    break;
+                // 404请求不存在
+                case 404:
+                    _this.$message.error('网络请求不存在')
+                    break;
+                // 其他错误，直接抛出错误提示
+                default:
+                    _this.$message.error(error.response.data.msg)
+            }
+            return Promise.reject(error.response)
+        }
+    }
 );
 
 /**
@@ -117,7 +117,7 @@ _axios.interceptors.response.use(
  */
 export function get (url, params) {
     return new Promise((resolve, reject) => {
-        axios.get(url, {
+        _axios.get(url, {
             params: params
         }).then(res => {
             resolve(res.data)
@@ -133,7 +133,7 @@ export function get (url, params) {
  */
 export function post (url, param) {
     return new Promise((resolve, reject) => {
-        axios.post(url, param)
+        _axios.post(url, param)
             .then(res => {
                 resolve(res.data)
             })
@@ -149,7 +149,7 @@ export function post (url, param) {
  */
 export function post2 (url) {
     return new Promise((resolve, reject) => {
-        axios.post(url)
+        _axios.post(url)
             .then(res => {
                 resolve(res.data)
             })
@@ -166,7 +166,7 @@ export function post2 (url) {
  */
 export function del (url, params) {
     return new Promise((resolve, reject) => {
-        axios.post(url, params)
+        _axios.post(url, params)
             .then(res => {
                 resolve(res.data)
             })

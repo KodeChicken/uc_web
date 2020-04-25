@@ -1,4 +1,4 @@
-import {get, post, post2, del} from "../plugins/axios";
+import {get, post, post2} from "../plugins/axios";
 
 // get 请求
 const findAllUser = (pageNum, pageSize) => get('/user/findAll/' + pageNum + '/' + pageSize);

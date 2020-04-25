@@ -32,7 +32,7 @@
         },
         methods: {
             findMenuTree() {
-                axios.post('/user/curMenus').then(res => {
+                this.$apis.curMenus().then(res => {
                     debugger
                     this.menuList = res.data
                 }).catch(err => {
