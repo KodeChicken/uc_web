@@ -7,7 +7,7 @@
             <el-header>
                 <common-header/>
             </el-header>
-<!--            <common-tab/>-->
+            <!--            <common-tab/>-->
             <el-main>
                 <router-view/>
             </el-main>
@@ -19,10 +19,11 @@
     import CommonHeader from "../components/CommonHeader";
     import CommonAside from "../components/CommonAside";
     import CommonTab from "../components/CommonTab";
+
     export default {
         data() {
             return {
-                menuList: []
+                menuList: [],
             }
         },
 
@@ -32,16 +33,18 @@
         methods: {
             findMenuTree() {
                 axios.post('/user/curMenus').then(res => {
-                    // this.$store.commit('setMenus', res.data.data)
-                    if (res.data.code == 603) {
-                        window.localStorage.setItem("Authorization", "")
-                        console.log('/user/curMenus==>Authorization: ', window.localStorage.getItem("Authorization"))
-                        this.$router.push('/login');
-                    } else {
-                        this.menuList = res.data.data
-                        console.log('this.menuList: ', this.menuList)
+                    debugger
+                    this.menuList = res.data
+                }).catch(err => {
+                    if (err.isAxiosError) {
+                        localStorage.removeItem("Authorization")
+                        this.$router.push('/networkErr');
                     }
-                }).catch(err => {console.log(err)})
+                    if (err.data.code === 603) {
+                        localStorage.removeItem("Authorization")
+                        this.$router.push('/login')
+                    }
+                })
             }
         },
         components: {

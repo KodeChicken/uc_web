@@ -43,19 +43,16 @@
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        alert('submit!');
-                        axios.post('/pub/login', this.loginInfo)
-                            .then(res => {
-                                    console.log(res.data.data.sessionId)
-                                    console.log('user.menus', res.data.data.menus)
-                                    window.localStorage.setItem("Authorization", res.data.data.sessionId)
-                                    console.log('login==>Authorization: ', window.localStorage.getItem("Authorization"))
-                                    this.$router.push('/');
-
-                            }).catch(err => {
-                                console.log(err)
+                        this.$apis.login(this.loginInfo).then(res => {
+                            debugger
+                            console.log(res.data.sessionId)
+                            console.log('user.menus', res.data.menus)
+                            window.localStorage.setItem("Authorization", res.data.sessionId)
+                            console.log('login==>Authorization: ', window.localStorage.getItem("Authorization"))
+                            this.$router.push('/');})
+                        .catch(err => {
+                            console.log(err)
                         })
-
                     } else {
                         console.log('error submit!!');
                         return false;

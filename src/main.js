@@ -7,8 +7,11 @@ import './plugins/element.js'
 import 'default-passive-events'
 // 此项依赖Vue和Element，一定要在两者之后
 import utils from "./common/utils"
+import api from "./js/api"
 
 Vue.prototype.$utils = utils
+Vue.prototype.$apis = api
+
 Vue.config.productionTip = false
 
 new Vue({

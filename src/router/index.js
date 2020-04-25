@@ -5,9 +5,10 @@ import CommonLogin from "../components/CommonLogin";
 import UserList from "../views/user/UserList";
 import AclAdmin from "../views/user/AclAdmin";
 import Index from "../views/Index";
+import CommonNetWorkErr from "../components/CommonNetWorkErr";
 
 Vue.use(VueRouter)
-
+let _this = Vue.prototype
 const routes = [
   {
     path: '/login',
@@ -31,6 +32,11 @@ const routes = [
         component: AclAdmin
       }
     ]
+  },
+  {
+    path: '/networkErr',
+    name: 'networkErr',
+    component: CommonNetWorkErr
   }
 ]
 
@@ -41,13 +47,13 @@ const router = new VueRouter({
 })
 
 router.beforeEach(( to, from, next ) => {
-  let token = window.localStorage.getItem("Authorization")
+  let token = localStorage.getItem("Authorization")
   if (to.path == "/login") {
     if (token) {
-      this.$utils.notifyTipsInfo(1000, '已登录，已勿重复跳转登录页面', 'center')
+      _this.$utils.notifyTipsInfo(1000, '已登录，已勿重复跳转登录页面', 'center')
       return next(from.path)
     }
-    window.localStorage.setItem("Authorization", "")
+    localStorage.removeItem("Authorization")
     return next()
   }
   if (!token) {

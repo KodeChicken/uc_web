@@ -170,7 +170,7 @@
                 axios.get('/user/findUser/' + row.id)
                     .then(res => {
                         if (res.data.code == 200) {
-                            this.userForm = res.data.data
+                            this.userForm = res.data
                             console.log(this.userForm);
                             this.$utils.messageTips(1000, '查询用户成功', 'success')
                         } else {
@@ -184,7 +184,7 @@
                     axios.put('/user/update', this.userForm)
                         .then(res => {
                             if (res.data.code == 200) {
-                                this.userForm = res.data.data
+                                this.userForm = res.data
                                 this.$utils.messageTips(1000, '更新用户成功', 'success')
                                 return Promise.resolve()
                             } else {
@@ -227,38 +227,31 @@
             },
             // 分页查询用户
             getAllUser() {
-                axios.get("user/findAll/"
-                    + this.pageParam.pageNum + "/" + this.pageParam.pageSize)
-                    .then(response => {
-                        if (response.data.code == 200) {
-                            this.userTableData = response.data.data.list
-                            this.pageParam.pageTotal = response.data.data.total
-                            console.log("getAllUser.tableData: ", this.userTableData)
-                            console.log('getAllUser.Authorization: ', window.localStorage.getItem("Authorization"))
-                            console.log('response: ', response);
-                            this.$utils.messageTips(1000, '获取用户列表success', 'success')
-                        }
-                    })
-                    .catch(error => {
+                this.$apis.findAllUser(this.pageParam.pageNum, this.pageParam.pageSize).then(res => {
+                    if (res.data.code == 200) {
+                        this.userTableData = response.data.list
+                        this.pageParam.pageTotal = response.data.total
+                        console.log("getAllUser.tableData: ", this.userTableData)
+                        this.$utils.messageTips(1000, '获取用户列表success', 'success')
+                    }})
+                    .catch(err => {
                         this.$utils.messageTips(1000, '获取用户列表失败', 'error')
                     })
             },
             // 根据用户id删除用户
             deleteUserById(row) {
                 this.$utils.confirmTips(row.name, '提示').then(() => {
-                    axios.delete("http://localhost:8080/user/delete/" + row.id)
-                        .then(response => {
-                            console.log(response.data.msg);
-                            if (response.data.code == 200) {
-                                this.$utils.messageTips(1000, '删除用户成功', 'success')
-                                if (this.pageParam.pageTotal != response.data.data) {
-                                    this.pageParam.pageTotal = response.data.data
-                                }
+                    this.$apis.deleteUserById(row.id).then(response => {
+                        console.log(response.data.msg);
+                        if (response.data.code == 200) {
+                            this.$utils.messageTips(1000, '删除用户成功', 'success')
+                            if (this.pageParam.pageTotal != response.data) {
+                                this.pageParam.pageTotal = response.data
                             }
-                        })
-                        .catch(error => {
-                            this.$utils.messageTips(1000, '删除用户失败', 'error')
-                        })
+                        }})
+                    .catch(error => {
+                        this.$utils.messageTips(1000, '删除用户失败', 'error')
+                    })
                 }).catch(() => {})
             }
         }
