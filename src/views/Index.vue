@@ -1,7 +1,7 @@
 <template>
     <el-container style="height: 100%">
         <el-aside width="200px" style="background-color: rgba(158, 153, 158, 1);">
-            <common-aside :navMenus="menuList"></common-aside>
+            <common-aside></common-aside>
         </el-aside>
         <el-container>
             <el-header>
@@ -28,24 +28,9 @@
         },
 
         created() {
-            this.findMenuTree()
         },
         methods: {
-            findMenuTree() {
-                this.$apis.curMenus().then(res => {
-                    debugger
-                    this.menuList = res.data
-                }).catch(err => {
-                    if (err.isAxiosError) {
-                        localStorage.removeItem("Authorization")
-                        this.$router.push('/networkErr');
-                    }
-                    if (err.data.code === 603) {
-                        localStorage.removeItem("Authorization")
-                        this.$router.push('/login')
-                    }
-                })
-            }
+
         },
         components: {
             CommonHeader,

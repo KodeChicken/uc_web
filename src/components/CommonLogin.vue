@@ -44,7 +44,6 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         this.$apis.login(this.loginInfo).then(res => {
-                        // axios.post('/pub/login', this.loginInfo).then(res => {
                             debugger
                             console.log(res.data.sessionId)
                             console.log('user.menus', res.data.menus)

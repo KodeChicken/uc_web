@@ -142,21 +142,17 @@
         },
         methods: {
             changeSwitch(row){
-                const id = row.id
-                const status = row.status
-                console.log('row: ', row)
-                console.log('id: ', id)
-                console.log('status: ', status)
-                axios.put('/user/updateStatus/' + id + '/' + status)
+                let id = row.id
+                let status = row.status
+                this.$apis.updateUserStatus(id, status)
                     .then(res => {
-                        if (res.data.code == 200) {
+                        if (res.code == 200) {
                             this.$utils.messageTips(1000, '是否启动: 更新成功', 'success')
                         } else {
                             this.$utils.messageTips(1000, '是否启动: 更新失败', 'error')
                         }
                     })
-                    .catch(err => {})
-
+                    .catch(err => {console.log(err)})
             },
             handleSelectionChange(val) {
                 console.log(val);
@@ -167,9 +163,9 @@
                 console.log(row.id);
                 //显示弹框
                 this.dialogFormVisible = true;
-                axios.get('/user/findUser/' + row.id)
+                this.$apis.findUserById(row.id)
                     .then(res => {
-                        if (res.data.code == 200) {
+                        if (res.code == 200) {
                             this.userForm = res.data
                             console.log(this.userForm);
                             this.$utils.messageTips(1000, '查询用户成功', 'success')
@@ -181,9 +177,9 @@
             },
             confirmDialogForm() {
                 this.dialogFormVisible = false
-                    axios.put('/user/update', this.userForm)
+                    this.$apis.updateUser(this.userForm)
                         .then(res => {
-                            if (res.data.code == 200) {
+                            if (res.code == 200) {
                                 this.userForm = res.data
                                 this.$utils.messageTips(1000, '更新用户成功', 'success')
                                 return Promise.resolve()
@@ -218,7 +214,6 @@
                 this.pageParam.pageNum = pageNum
                 this.getAllUser()
                 console.log('pageChange.pageNum: ', this.pageParam.pageNum);
-
             },
             sizeChange(currentSize) {
                 this.pageParam.pageSize = currentSize
@@ -228,11 +223,12 @@
             // 分页查询用户
             getAllUser() {
                 this.$apis.findAllUser(this.pageParam.pageNum, this.pageParam.pageSize).then(res => {
-                    if (res.data.code == 200) {
-                        this.userTableData = response.data.list
-                        this.pageParam.pageTotal = response.data.total
-                        console.log("getAllUser.tableData: ", this.userTableData)
+                    debugger
+                    if (res.code == 200) {
+                        this.userTableData = res.data.list
+                        this.pageParam.pageTotal = res.data.total
                         this.$utils.messageTips(1000, '获取用户列表success', 'success')
+                        console.log("getAllUser.tableData: ", this.userTableData)
                     }})
                     .catch(err => {
                         this.$utils.messageTips(1000, '获取用户列表失败', 'error')
@@ -244,17 +240,16 @@
                     this.$apis.deleteUserById(row.id).then(response => {
                         console.log(response.data.msg);
                         if (response.data.code == 200) {
-                            this.$utils.messageTips(1000, '删除用户成功', 'success')
                             if (this.pageParam.pageTotal != response.data) {
                                 this.pageParam.pageTotal = response.data
                             }
+                            this.$utils.messageTips(1000, '删除用户成功', 'success')
                         }})
-                    .catch(error => {
+                    .catch(err => {
                         this.$utils.messageTips(1000, '删除用户失败', 'error')
                     })
-                }).catch(() => {})
+                }).catch((err) => {console.log(err)})
             }
         }
-
     }
 </script>

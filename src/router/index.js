@@ -47,6 +47,7 @@ const router = new VueRouter({
 })
 
 router.beforeEach(( to, from, next ) => {
+  debugger
   let token = localStorage.getItem("Authorization")
   if (to.path == "/login") {
     if (token) {
