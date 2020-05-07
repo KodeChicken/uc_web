@@ -50,10 +50,6 @@ router.beforeEach(( to, from, next ) => {
   debugger
   let token = localStorage.getItem("Authorization")
   if (to.path == "/login") {
-    if (token) {
-      _this.$utils.notifyTipsInfo(1000, '已登录，已勿重复跳转登录页面', 'center')
-      return next(from.path)
-    }
     localStorage.removeItem("Authorization")
     return next()
   }

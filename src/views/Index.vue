@@ -26,7 +26,6 @@
                 menuList: [],
             }
         },
-
         created() {
         },
         methods: {

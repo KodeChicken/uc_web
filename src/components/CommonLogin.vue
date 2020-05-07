@@ -45,12 +45,12 @@
                     if (valid) {
                         this.$apis.login(this.loginInfo).then(res => {
                             debugger
-                            console.log(res.data.sessionId)
-                            console.log('user.menus', res.data.menus)
-                            localStorage.setItem("Authorization", res.data.sessionId)
+                            console.log(res.data.token)
+                            console.log('user.menus', res.data.user.menus)
+                            localStorage.setItem("Authorization", res.data.token)
                             console.log('login==>Authorization: ', localStorage.getItem("Authorization"))
-                            this.$router.push('/');})
-                        .catch(err => {
+                            this.$router.push('/');
+                        }).catch(err => {
                             console.log(err)
                         })
                     } else {

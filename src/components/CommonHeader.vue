@@ -1,14 +1,14 @@
 <template>
     <header>
         <el-header style="text-align: right; font-size: 12px">
-<!--            <div class="l-content">-->
-<!--                <el-breadcrumb separator="/" style="border-right: none" width="200px">-->
-<!--                    <el-breadcrumb-item :to="{path: '/'}">首页</el-breadcrumb-item>-->
-<!--                    <el-breadcrumb-item v-if="current" style="color: #fff;">-->
-<!--                        <router-link :to="current.path">{{current.label}}</router-link>-->
-<!--                    </el-breadcrumb-item>-->
-<!--                </el-breadcrumb>-->
-<!--            </div>-->
+            <!--            <div class="l-content">-->
+            <!--                <el-breadcrumb separator="/" style="border-right: none" width="200px">-->
+            <!--                    <el-breadcrumb-item :to="{path: '/'}">首页</el-breadcrumb-item>-->
+            <!--                    <el-breadcrumb-item v-if="current" style="color: #fff;">-->
+            <!--                        <router-link :to="current.path">{{current.label}}</router-link>-->
+            <!--                    </el-breadcrumb-item>-->
+            <!--                </el-breadcrumb>-->
+            <!--            </div>-->
 
             <div class="profileClass">
                 <el-dropdown trigger="click" size="mini">
@@ -49,12 +49,13 @@
             //     console.log('getbreadCurmb1: ', this.breadList)
             // }
             logout() {
-                axios.get('/logout').then(res => {
-                    alert("logout")
-                    console.log('logout', res)}).catch(err => console.log(err))
-
-        }
-
+                this.$apis.logout().then(res => {
+                    if (res.code === 200) {
+                        localStorage.removeItem("Authorization");
+                        this.$router.push('/login');
+                    }
+                }).catch(err => console.log(err))
+            }
         },
     }
 </script>
@@ -65,6 +66,7 @@
         height: 100%;
         align-items: center;
     }
+
     .l-content {
         width: 400px;
         display: flex;
@@ -79,11 +81,13 @@
             height: 40px;
             border-radius: 50%;
         }
+
         .userName {
             float: right;
             margin-left: 10px;
             margin-top: 12px;
         }
+
         position: fixed;
         right: 50px;
         text-align: center;
@@ -96,6 +100,7 @@
         .el-breadcrumb__inner {
             color: #fff;
         }
+
         &:last-child {
             color: #fff;
         }
