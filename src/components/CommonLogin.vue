@@ -21,6 +21,8 @@
 </template>
 
 <script>
+    import {login} from "../js/login";
+
     export default {
         data() {
             return {
@@ -43,10 +45,9 @@
             submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        this.$apis.login(this.loginInfo).then(res => {
-                            debugger
+                        login(this.loginInfo).then(res => {
                             console.log(res.data.token)
-                            console.log('user.menus', res.data.user.menus)
+                            console.log('user.menus', res.data.menus)
                             localStorage.setItem("Authorization", res.data.token)
                             console.log('login==>Authorization: ', localStorage.getItem("Authorization"))
                             this.$router.push('/');

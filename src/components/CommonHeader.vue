@@ -28,6 +28,7 @@
 </template>
 
 <script>
+    import {logout} from "../js/login";
     export default {
         data() {
             return {
@@ -49,7 +50,7 @@
             //     console.log('getbreadCurmb1: ', this.breadList)
             // }
             logout() {
-                this.$apis.logout().then(res => {
+                logout().then(res => {
                     if (res.code === 200) {
                         localStorage.removeItem("Authorization");
                         this.$router.push('/login');

@@ -1,5 +1,5 @@
 <template>
-    <h1>这是导航3</h1>
+    <div>机构管理页面，待开发</div>
 </template>
 
 <script>

@@ -27,6 +27,7 @@
             }
         },
         created() {
+            console.log('routePath:', this.$route.path)
         },
         methods: {
 

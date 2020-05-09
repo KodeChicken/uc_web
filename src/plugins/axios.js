@@ -39,14 +39,12 @@ _axios.interceptors.request.use(
 // Add a response interceptor
 _axios.interceptors.response.use(
     function (response) {
-    debugger
         if (response.data.code === 200) {
             return response;
         } else if (response.data.code === 603) {
             // 清除token
             if (localStorage.getItem('Authorization')) {
                 localStorage.removeItem('Authorization');
-                // TODO: 该消息框存在响应拦截器中，异步请求时会多次调用显示，属于bug
                 MessageBox.alert('登录过期，请重新登录', {
                     confirmButtonText: '跳转登录页面',
                     callback: action => {

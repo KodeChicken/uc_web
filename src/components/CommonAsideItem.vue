@@ -1,7 +1,8 @@
 <template>
     <div v-if="item.childrens">
         <template v-if="item.childrens.length == 0">
-            <el-menu-item :index="item.uri">
+            <el-menu-item :index="item.uri"
+                          :class="$route.path == child.uri ? 'is-active' : ''">
                 <i class="el-icon-menu"></i>
                 {{item.name}}
             </el-menu-item>
@@ -39,5 +40,7 @@
 </script>
 
 <style scoped>
-
+    .el-menu-item.is-active, is-active {
+        color: green;
+    }
 </style>

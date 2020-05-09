@@ -4,8 +4,7 @@
         <el-menu
            router
             background-color="#545c64"
-            text-color="#rgb(19, 9, 9)"
-            active-text-color="green">
+            text-color="#rgb(19, 9, 9)">
             <common-aside-item v-for="menu in menuList" :key="menu.uri" :item="menu" />
         </el-menu>
     </div>
@@ -13,7 +12,7 @@
 
 <script>
     import CommonAsideItem from "./CommonAsideItem";
-
+    import {curMenus} from "../js/menus";
     export default {
         data() {
             return {
@@ -30,8 +29,7 @@
         },
         methods: {
             findMenuTree() {
-                this.$apis.curMenus().then(res => {
-                debugger
+                curMenus().then(res => {
                     this.menuList = res.data
                     console.log('menuList: ',this.menuList)
                 }).catch(err => {
