@@ -83,9 +83,7 @@
                     <template v-slot="scope">
                         <el-button size="mini" type="primary" @click="editUserInfo(scope.row)">编辑</el-button>
                         <el-button size="mini" type="danger" @click="deleteUserInfo(scope.row)"
-                                   style="margin-right: 5px">
-                            删除
-                        </el-button>
+                                   style="margin-right: 5px" v-show="checkPermit('user:delete')">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -105,10 +103,7 @@
                    :close-on-click-modal="false">
             <el-form :model="userForm">
                 <el-form-item label="名称" :label-width="formLabelWidth">
-                    <el-input v-model="userForm.fullname" autocomplete="off" size="small"></el-input>
-                </el-form-item>
-                <el-form-item label="密码" :label-width="formLabelWidth">
-                    <el-input v-model="userForm.password" autocomplete="off" size="small"></el-input>
+                    <el-input v-model="userForm.username" autocomplete="off" size="small"></el-input>
                 </el-form-item>
                 <el-form-item label="地址" :label-width="formLabelWidth">
                     <el-input v-model="userForm.address" autocomplete="off" size="small"></el-input>
@@ -129,6 +124,8 @@
 
 <script>
     import {findAllUser, findUserById, deleteUserById, updateUser, updateUserStatus} from "../../js/userList.js"
+    import {mapState,mapGetters} from 'vuex'
+
 
     export default {
         data() {
@@ -150,12 +147,7 @@
                 // 用户table中多选存储的用户Id
                 multipleSelection: [],
                 // 用户表单信息
-                userForm: {
-                    name: '',
-                    password: '',
-                    address: '',
-                    email: ''
-                },
+                userForm: {},
                 // 是否显示弹出框
                 dialogFormVisible: false,
                 // 弹出框中form表单label字体的宽度
@@ -164,6 +156,11 @@
         },
         created() {
             this.getAllUser()
+        },
+        computed: {
+            ...mapGetters([
+                'getPermits'
+            ]),
         },
         watch: {
             'pageParam.pageTotal': {
@@ -183,6 +180,18 @@
             }
         },
         methods: {
+            checkPermit(val) {
+                let permits = this.getPermits;
+                if (val && permits.length > 0) {
+                    let ts = permits.filter(item => {
+                        return item === val;
+                    });
+                    debugger
+                    return ts.length > 0;
+                }
+                debugger
+                return false;
+            },
             handleRemove(file, fileList) {
                 console.log(file, fileList);
             },
@@ -193,7 +202,7 @@
                 this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
             },
             beforeRemove(file, fileList) {
-                return this.$confirm(`确定移除 ${ file.name }？`);
+                return this.$confirm(`确定移除 ${file.name}？`);
             },
             handleSearchSelect(item) {
                 console.log(item);
@@ -210,18 +219,17 @@
                 };
             },
             changeSwitch(row) {
-                let id = row.id
-                let status = row.status
-                updateUserStatus(id, status)
-                    .then(res => {
+                let id = row.id;
+                let status = row.status;
+                updateUserStatus(id, status).then(res => {
                         if (res.code == 200) {
-                            this.$utils.messageTips(1000, '是否启动: 更新成功', 'success')
+                            this.$utils.messageTips(1000, '是否启动: 更新成功', 'success');
                         } else {
-                            this.$utils.messageTips(1000, '是否启动: 更新失败', 'error')
+                            this.$utils.messageTips(1000, '是否启动: 更新失败', 'error');
                         }
                     })
                     .catch(err => {
-                        console.log(err)
+                        console.log(err);
                     })
             },
             handleSelectionChange(val) {
@@ -233,56 +241,46 @@
                 console.log(row.id);
                 //显示弹框
                 this.dialogFormVisible = true;
-                findUserById(row.id)
-                    .then(res => {
-                        if (res.code == 200) {
-                            this.userForm = res.data
-                            console.log(this.userForm);
-                            this.$utils.messageTips(1000, '查询用户成功', 'success')
-                        } else {
-                            this.$utils.messageTips(1000, '未找到用户信息', 'error')
-                        }
+                findUserById(row.id).then(res => {
+                        this.userForm = res.data;
+                        console.log(this.userForm);
+                        this.$utils.messageTips(1000, '查询用户成功', 'success');
                     })
-
+                    .catch(err => {
+                        console.log(err);
+                        this.$utils.messageTips(1000, '未找到用户信息', 'error');
+                    })
             },
             confirmDialogForm() {
-                this.dialogFormVisible = false
-                updateUser(this.userForm)
-                    .then(res => {
+                this.dialogFormVisible = false;
+                updateUser(this.userForm).then(res => {
                         if (res.code == 200) {
-                            this.userForm = res.data
-                            this.$utils.messageTips(1000, '更新用户成功', 'success')
+                            this.userForm = res.data;
+                            this.$utils.messageTips(1000, '更新用户成功', 'success');
                             return Promise.resolve()
                         } else {
-                            this.$utils.messageTips(1000, '更新用户失败', 'error')
-                            return Promise.reject(res)
+                            this.$utils.messageTips(1000, '更新用户失败', 'error');
+                            return Promise.reject(res);
                         }
-                    })
-                    .then(this.getAllUser())
-                    .catch(err => {
-                        this.$utils.messageTips(1000, '更新用户失败', 'error')
+                    }).then(this.getAllUser()).catch(err => {
+                        this.$utils.messageTips(1000, '更新用户失败', 'error');
                     })
             },
             cacelDialogForm() {
-                this.dialogFormVisible = false
-                this.userForm = {
-                    name: '',
-                    password: '',
-                    address: '',
-                    email: ''
-                }
+                this.dialogFormVisible = false;
+                this.userForm = {};
             },
             // dialogFormVisible = false
             // 删除用户
             deleteUserInfo(row) {
-                this.deleteUserById(row)
+                this.deleteUserById(row);
             },
             handleClick(id) {
                 console.log(id);
             },
             pageChange(pageNum) {
-                this.pageParam.pageNum = pageNum
-                this.getAllUser()
+                this.pageParam.pageNum = pageNum;
+                this.getAllUser();
                 console.log('pageChange.pageNum: ', this.pageParam.pageNum);
             },
             sizeChange(currentSize) {
@@ -293,25 +291,25 @@
             // 分页查询用户
             getAllUser() {
                 findAllUser(this.pageParam.pageNum, this.pageParam.pageSize).then(res => {
-                    if (res.code == 200) {
-                        this.userTableData = res.data.list
-                        this.restaurants = this.userTableData.map((item) => {
-                            return {"value": item.username}
-                        });
-                        this.pageParam.pageTotal = res.data.total
-                        this.$utils.messageTips(1000, '获取用户列表success', 'success')
-                        console.log("getAllUser.tableData: ", this.userTableData)
-                        console.log("getAllUser.restaurants: ", this.restaurants)
-                    }
+                    this.userTableData = res.data.list;
+                    this.restaurants = this.userTableData.map((item) => {
+                        return {"value": item.username};
+                    });
+                    this.pageParam.pageTotal = res.data.total;
+                    this.$utils.messageTips(1000, '获取用户列表success', 'success');
+
+                    console.log("getAllUser.tableData: ", this.userTableData);
+                    console.log("getAllUser.restaurants: ", this.restaurants);
                 }).catch(err => {
-                    this.$utils.messageTips(1000, '获取用户列表失败', 'error')
+                    this.$utils.messageTips(1000, '获取用户列表失败', 'error');
                 })
             },
             // 根据用户id删除用户
             deleteUserById(row) {
-                this.$utils.confirmTips(row.name, '提示').then(() => {
-                    deleteUserById(row.id).then(response => {
-                        console.log(response.data.msg);
+                this.$utils.confirmTips(row.username, '提示').then(() => {
+                    deleteUserById(row.id).then(res => {
+                    debugger
+                        console.log(res.data.msg);
                         if (response.data.code == 200) {
                             if (this.pageParam.pageTotal != response.data) {
                                 this.pageParam.pageTotal = response.data

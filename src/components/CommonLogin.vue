@@ -13,7 +13,7 @@
                 <el-input type="password" v-model="loginInfo.password"></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="submitForm('loginInfo')">提交</el-button>
+                <el-button type="primary" @click="submitForm('loginInfo')" :disabled="isSubmit">提交</el-button>
                 <el-button @click="resetForm('loginInfo')">重置</el-button>
             </el-form-item>
         </el-form>
@@ -38,7 +38,11 @@
                     password: [
                         {require: true, message: '密码不可为空', trigger: 'blur'}
                     ]
-                }
+                },
+                // 错误登录次数
+                loginErrNum: 0,
+                // 是否禁用提交
+                isSubmit: false
             }
         },
         methods: {
@@ -46,13 +50,19 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         login(this.loginInfo).then(res => {
-                            console.log(res.data.token)
-                            console.log('user.menus', res.data.menus)
-                            localStorage.setItem("Authorization", res.data.token)
-                            console.log('login==>Authorization: ', localStorage.getItem("Authorization"))
+                            debugger
+                            console.log(res.data.token);
+                            localStorage.setItem("Authorization", res.data.token);
+                            this.$store.commit('setPermissions', res.data.params.permitSet);
                             this.$router.push('/');
+                            console.log('user.menus', res.data.menus);
+                            console.log('login==>Authorization: ', localStorage.getItem("Authorization"));
+                            console.log('login==>setPermissions: ', res.data.params.permitSet);
+                            console.log('login==>setRoles: ', res.data.params.roleSet);
                         }).catch(err => {
-                            console.log(err)
+                            if (err.code === 607) {
+                            }
+                            console.log(err);
                         })
                     } else {
                         console.log('error submit!!');

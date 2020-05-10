@@ -3,10 +3,16 @@ import Vue from 'vue'
 const _this = Vue.prototype;
 export default {
     confirmTips(data, title) {
-        _this.$confirm('确定删除' + data + '用户吗?', 'title', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
+        return new Promise((resolve, reject) => {
+            _this.$confirm('确定删除' + data + '用户吗?', 'title', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                resolve();
+            }).catch(() => {
+                reject();
+            })
         })
     },
     messageTips(duration, message, type) {

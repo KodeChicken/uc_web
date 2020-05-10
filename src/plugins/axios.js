@@ -5,7 +5,9 @@ import axios from "axios";
 import {Message, Loading, MessageBox} from 'element-ui'
 import router from '../router'
 import Qs from 'qs';
+import ca from "element-ui/src/locale/lang/ca";
 
+let _this = Vue.prototype
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
@@ -39,9 +41,13 @@ _axios.interceptors.request.use(
 // Add a response interceptor
 _axios.interceptors.response.use(
     function (response) {
-        if (response.data.code === 200) {
+        debugger
+        let code = response.data.code;
+        if (code === 200) {
             return response;
-        } else if (response.data.code === 603) {
+        }
+        // 未登录，获取token失效
+        if (code === 603) {
             // 清除token
             if (localStorage.getItem('Authorization')) {
                 localStorage.removeItem('Authorization');
@@ -57,7 +63,18 @@ _axios.interceptors.response.use(
                     }
                 });
             }
+            return Promise.reject(response)
         }
+        // 密码错误
+        if (code === 607) {
+            _this.$utils.messageTips(1000, '用户名或者密码不正确', 'error')
+            return Promise.reject(response)
+        }
+        if (code === 611) {
+            _this.$utils.messageTips(1000, '没有权限', 'error')
+            return Promise.reject(response)
+        }
+
         return response;
     },
     function (error) {
@@ -124,7 +141,7 @@ export function put(url, params) {
  */
 export function del(url, params) {
     return new Promise((resolve, reject) => {
-        _axios.post(url, params)
+        _axios.delete(url, params)
             .then(res => {
                 resolve(res.data)
             })
