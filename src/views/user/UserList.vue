@@ -1,14 +1,6 @@
 <template>
     <div>
-        <div id="button-group">
-            <el-autocomplete
-                    class="inline-input"
-                    v-model="userInfo"
-                    :fetch-suggestions="querySearch"
-                    placeholder="请输入内容"
-                    :trigger-on-focus="false"
-                    @select="handleSearchSelect"
-                    size="mini"></el-autocomplete>
+        <el-row>
             <el-upload
                     class="upload-demo"
                     action="https://jsonplaceholder.typicode.com/posts/"
@@ -23,7 +15,17 @@
                     <el-button size="mini" type="primary">点击上传</el-button>
                 </el-tooltip>
             </el-upload>
-        </div>
+            <el-button class="add-user-class" size="mini" type="primary" @click="addUser">添加用户</el-button>
+            <el-autocomplete
+                    class="inline-input"
+                    v-model="userInfo"
+                    :fetch-suggestions="querySearch"
+                    placeholder="请输入内容"
+                    :trigger-on-focus="false"
+                    @select="handleSearchSelect"
+                    size="mini">
+            </el-autocomplete>
+        </el-row>
         <div id="user-table">
             <el-table
                     ref="multipleTable"
@@ -83,7 +85,8 @@
                     <template v-slot="scope">
                         <el-button size="mini" type="primary" @click="editUserInfo(scope.row)">编辑</el-button>
                         <el-button size="mini" type="danger" @click="deleteUserInfo(scope.row)"
-                                   style="margin-right: 5px" v-show="checkPermit('user:delete')">删除</el-button>
+                                   style="margin-right: 5px" v-show="checkPermit('user:delete')">删除
+                        </el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -100,18 +103,34 @@
         </div>
         <!-- Form -->
         <el-dialog title="用户信息" :visible.sync="dialogFormVisible" width="25%"
-                   :close-on-click-modal="false">
+                   :close-on-click-modal="false" class="dialogClass">
             <el-form :model="userForm">
-                <el-form-item label="名称" :label-width="formLabelWidth">
+                <el-form-item label="用户名" :label-width="formLabelWidth">
                     <el-input v-model="userForm.username" autocomplete="off" size="small"></el-input>
                 </el-form-item>
-                <el-form-item label="地址" :label-width="formLabelWidth">
-                    <el-input v-model="userForm.address" autocomplete="off" size="small"></el-input>
+                <el-form-item label="密码" :label-width="formLabelWidth">
+                    <el-input v-model="userForm.password" autocomplete="off" size="small"></el-input>
                 </el-form-item>
-                <el-form-item label="邮箱" :label-width="formLabelWidth" :rules="[
-                              { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-                              { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }]">
-                    <el-input v-model="userForm.email" autocomplete="off" size="small"></el-input>
+                <el-form-item label="邮箱" :label-width="formLabelWidth">
+                    <el-input v-model="userForm.email" type="email"
+                              size="small"
+                              :rules="[
+                          { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+                          { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }]">
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="手机号" :label-width="formLabelWidth">
+                    <el-input v-model="userForm.phone" size="small"></el-input>
+                </el-form-item>
+                <el-form-item label="性别" :label-width="formLabelWidth">
+                    <el-radio-group v-model="userForm.sex">
+                        <el-radio label="1">男</el-radio>
+                        <el-radio label="0">女</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item label="出生日期" :label-width="formLabelWidth">
+                    <el-date-picker type="date" placeholder="选择日期" v-model="userForm.birthday"
+                                    size="small"></el-date-picker>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -124,7 +143,8 @@
 
 <script>
     import {findAllUser, findUserById, deleteUserById, updateUser, updateUserStatus} from "../../js/userList.js"
-    import {mapState,mapGetters} from 'vuex'
+    import {registry} from "../../js/login";
+    import {mapState, mapGetters} from 'vuex'
 
 
     export default {
@@ -148,14 +168,17 @@
                 multipleSelection: [],
                 // 用户表单信息
                 userForm: {},
+                permissions: [],
                 // 是否显示弹出框
                 dialogFormVisible: false,
+                isAdd: false,
+                // 是否显示添加用户框
                 // 弹出框中form表单label字体的宽度
-                formLabelWidth: '60px'
+                formLabelWidth: '70px'
             }
         },
         created() {
-            this.getAllUser()
+            this.getAllUser();
         },
         computed: {
             ...mapGetters([
@@ -180,16 +203,18 @@
             }
         },
         methods: {
+            addUser() {
+                this.dialogFormVisible = true;
+                this.isAdd = true;
+            },
             checkPermit(val) {
                 let permits = this.getPermits;
                 if (val && permits.length > 0) {
                     let ts = permits.filter(item => {
                         return item === val;
                     });
-                    debugger
                     return ts.length > 0;
                 }
-                debugger
                 return false;
             },
             handleRemove(file, fileList) {
@@ -222,12 +247,12 @@
                 let id = row.id;
                 let status = row.status;
                 updateUserStatus(id, status).then(res => {
-                        if (res.code == 200) {
-                            this.$utils.messageTips(1000, '是否启动: 更新成功', 'success');
-                        } else {
-                            this.$utils.messageTips(1000, '是否启动: 更新失败', 'error');
-                        }
-                    })
+                    if (res.code == 200) {
+                        this.$utils.messageTips(1000, '是否启动: 更新成功', 'success');
+                    } else {
+                        this.$utils.messageTips(1000, '是否启动: 更新失败', 'error');
+                    }
+                })
                     .catch(err => {
                         console.log(err);
                     })
@@ -242,10 +267,11 @@
                 //显示弹框
                 this.dialogFormVisible = true;
                 findUserById(row.id).then(res => {
-                        this.userForm = res.data;
-                        console.log(this.userForm);
-                        this.$utils.messageTips(1000, '查询用户成功', 'success');
-                    })
+                    this.userForm = res.data;
+                    this.userForm.sex = this.userForm.sex.toString()
+                    console.log('findUserById: ', this.userForm);
+                    this.$utils.messageTips(1000, '查询用户成功', 'success');
+                })
                     .catch(err => {
                         console.log(err);
                         this.$utils.messageTips(1000, '未找到用户信息', 'error');
@@ -253,18 +279,20 @@
             },
             confirmDialogForm() {
                 this.dialogFormVisible = false;
-                updateUser(this.userForm).then(res => {
-                        if (res.code == 200) {
-                            this.userForm = res.data;
-                            this.$utils.messageTips(1000, '更新用户成功', 'success');
-                            return Promise.resolve()
-                        } else {
-                            this.$utils.messageTips(1000, '更新用户失败', 'error');
-                            return Promise.reject(res);
-                        }
+                if (this.isAdd) {
+                    registry(this.userForm).then(res => {
+                        this.$utils.messageTips(1000, '添加用户成功', 'success');
+                        this.getAllUser();
+                        this.userForm = {};
+                    }).catch(err => console.log(err))
+                } else {
+                    updateUser(this.userForm).then(res => {
+                        this.userForm = res.data;
+                        this.$utils.messageTips(1000, '更新用户成功', 'success');
                     }).then(this.getAllUser()).catch(err => {
                         this.$utils.messageTips(1000, '更新用户失败', 'error');
                     })
+                }
             },
             cacelDialogForm() {
                 this.dialogFormVisible = false;
@@ -273,7 +301,19 @@
             // dialogFormVisible = false
             // 删除用户
             deleteUserInfo(row) {
-                this.deleteUserById(row);
+                this.$utils.confirmTips(row.username, '提示').then(() => {
+                    deleteUserById(row.id).then(res => {
+                        this.$utils.messageTips(1000, '删除用户成功', 'success');
+                        if (this.pageParam.pageTotal != res.data) {
+                            this.pageParam.pageTotal = res.data;
+                        }
+                        this.getAllUser();
+                    }).catch(err => {
+                        this.$utils.messageTips(1000, '删除用户失败', 'error')
+                    })
+                }).catch((err) => {
+                    console.log(err)
+                })
             },
             handleClick(id) {
                 console.log(id);
@@ -304,25 +344,6 @@
                     this.$utils.messageTips(1000, '获取用户列表失败', 'error');
                 })
             },
-            // 根据用户id删除用户
-            deleteUserById(row) {
-                this.$utils.confirmTips(row.username, '提示').then(() => {
-                    deleteUserById(row.id).then(res => {
-                    debugger
-                        console.log(res.data.msg);
-                        if (response.data.code == 200) {
-                            if (this.pageParam.pageTotal != response.data) {
-                                this.pageParam.pageTotal = response.data
-                            }
-                            this.$utils.messageTips(1000, '删除用户成功', 'success')
-                        }
-                    }).catch(err => {
-                        this.$utils.messageTips(1000, '删除用户失败', 'error')
-                    })
-                }).catch((err) => {
-                    console.log(err)
-                })
-            }
         }
     }
 </script>
@@ -336,18 +357,22 @@
         margin-top: 10px;
     }
 
+    .inline-input {
+        margin-left: 10px;
+    }
+
     .el-button--mini {
         margin-left: 10px;
     }
 
     .upload-demo {
-        display: inline;
-
+        float: left;
     }
 
     .el-input--small {
         width: 320px;
     }
 
-
+    .add-user-class {
+    }
 </style>

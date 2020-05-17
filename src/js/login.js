@@ -6,3 +6,5 @@ export const logout = () => get('/pub/logout');
 
 // post 请求
 export const login = loginInfo => post('/pub/login', loginInfo);
+
+export const registry = registryInfo => post('/pub/registry', registryInfo);

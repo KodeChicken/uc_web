@@ -28,8 +28,8 @@ const _axios = axios.create(config);
 
 _axios.interceptors.request.use(
     config => {
-        if (localStorage.getItem('Authorization')) {
-            config.headers.Authorization = localStorage.getItem('Authorization');
+        if (sessionStorage.getItem('Authorization')) {
+            config.headers.Authorization = sessionStorage.getItem('Authorization');
         }
         return config;
     },
@@ -41,7 +41,6 @@ _axios.interceptors.request.use(
 // Add a response interceptor
 _axios.interceptors.response.use(
     function (response) {
-        debugger
         let code = response.data.code;
         if (code === 200) {
             return response;
@@ -49,8 +48,8 @@ _axios.interceptors.response.use(
         // 未登录，获取token失效
         if (code === 603) {
             // 清除token
-            if (localStorage.getItem('Authorization')) {
-                localStorage.removeItem('Authorization');
+            if (sessionStorage.getItem('Authorization')) {
+                sessionStorage.removeItem('Authorization');
                 MessageBox.alert('登录过期，请重新登录', {
                     confirmButtonText: '跳转登录页面',
                     callback: action => {

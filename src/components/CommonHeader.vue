@@ -52,7 +52,7 @@
             logout() {
                 logout().then(res => {
                     if (res.code === 200) {
-                        localStorage.removeItem("Authorization");
+                        sessionStorage.removeItem("Authorization");
                         this.$router.push('/login');
                     }
                 }).catch(err => console.log(err))

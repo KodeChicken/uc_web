@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 import CommonLogin from "../components/CommonLogin";
+import CommonRegistry from "../components/CommonRegistry";
 import CommonNetWorkErr from "../components/CommonNetWorkErr";
 
 import Index from "../views/Index";
@@ -22,6 +23,11 @@ const routes = [
         path: '/login',
         name: 'login',
         component: CommonLogin
+    },
+    {
+        path: '/registry',
+        name: 'registry',
+        component: CommonRegistry
     },
     {
         path: '/',
@@ -85,15 +91,18 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-    let token = localStorage.getItem("Authorization")
+    let token = sessionStorage.getItem("Authorization")
+    if (to.path == "/registry") {
+        return next();
+    }
     if (to.path == "/login") {
-        localStorage.removeItem("Authorization")
-        return next()
+        sessionStorage.removeItem("Authorization")
+        return next();
     }
     if (!token) {
-        return next("/login")
+        return next("/login");
     }
-    return next()
+    return next();
 })
 
 

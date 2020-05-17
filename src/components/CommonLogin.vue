@@ -15,6 +15,7 @@
             <el-form-item>
                 <el-button type="primary" @click="submitForm('loginInfo')" :disabled="isSubmit">提交</el-button>
                 <el-button @click="resetForm('loginInfo')">重置</el-button>
+                <el-button @click.native="registry">注册</el-button>
             </el-form-item>
         </el-form>
     </div>
@@ -50,13 +51,12 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         login(this.loginInfo).then(res => {
-                            debugger
                             console.log(res.data.token);
-                            localStorage.setItem("Authorization", res.data.token);
+                            sessionStorage.setItem("Authorization", res.data.token);
                             this.$store.commit('setPermissions', res.data.params.permitSet);
                             this.$router.push('/');
                             console.log('user.menus', res.data.menus);
-                            console.log('login==>Authorization: ', localStorage.getItem("Authorization"));
+                            console.log('login==>Authorization: ', sessionStorage.getItem("Authorization"));
                             console.log('login==>setPermissions: ', res.data.params.permitSet);
                             console.log('login==>setRoles: ', res.data.params.roleSet);
                         }).catch(err => {
@@ -69,6 +69,9 @@
                         return false;
                     }
                 });
+            },
+            registry() {
+              this.$router.push('/registry');
             },
             resetForm(formName) {
                 this.$refs[formName].resetFields();
