@@ -4,7 +4,7 @@ import {get, post, put, del} from "../plugins/axios";
 
 
 // post 请求
-export const curMenus = () => post('/user/curMenus');
+export const curMenus = () => post('/pub/curMenus');
 
 
 // post 请求

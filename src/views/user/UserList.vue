@@ -28,7 +28,7 @@
         </el-row>
         <div id="user-table">
             <el-table
-                    ref="multipleTable"
+                    ref="userTable"
                     :data="userTableData"
                     border
                     style="width: 100%"
@@ -80,9 +80,10 @@
                 </el-table-column>
                 <el-table-column
                         label="操作"
-                        width="200px"
+                        width="300px"
                         align="center">
                     <template v-slot="scope">
+                        <el-button size="mini" type="primary" @click="addRoles(scope.row)">添加角色</el-button>
                         <el-button size="mini" type="primary" @click="editUserInfo(scope.row)">编辑</el-button>
                         <el-button size="mini" type="danger" @click="deleteUserInfo(scope.row)"
                                    style="margin-right: 5px" v-show="checkPermit('user:delete')">删除
@@ -102,7 +103,7 @@
             </el-pagination>
         </div>
         <!-- Form -->
-        <el-dialog title="用户信息" :visible.sync="dialogFormVisible" width="25%"
+        <el-dialog title="用户信息" :visible.sync="editUserInfoDialog" width="25%"
                    :close-on-click-modal="false" class="dialogClass">
             <el-form :model="userForm">
                 <el-form-item label="用户名" :label-width="formLabelWidth">
@@ -138,16 +139,28 @@
                 <el-button type="primary" @click="confirmDialogForm">确 定</el-button>
             </div>
         </el-dialog>
+
+        <el-dialog title="角色列表" :visible.sync="isShowRoles" width="25%"
+                   :close-on-click-modal="false" class="dialogClass">
+            <common-add-role ref="roles" :selectUserId="selectUserId" :isShowRoles="isShowRoles"></common-add-role>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="cacelRoles">取 消</el-button>
+                <el-button type="primary" @click="confirmRoles">确 定</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
 <script>
-    import {findAllUser, findUserById, deleteUserById, updateUser, updateUserStatus} from "../../js/userList.js"
+    import {findAllUser, findUserById, deleteUserById, updateUser, updateUserStatus, updateUserRoles} from "../../js/userList.js"
     import {registry} from "../../js/login";
     import {mapState, mapGetters} from 'vuex'
-
+    import CommonAddRole from "../../components/CommonAddRole";
 
     export default {
+        components: {
+            CommonAddRole,
+        },
         data() {
             return {
                 // 分页参数
@@ -170,15 +183,22 @@
                 userForm: {},
                 permissions: [],
                 // 是否显示弹出框
-                dialogFormVisible: false,
+                editUserInfoDialog: false,
+                // 是否显示角色弹出框
+                isShowRoles: false,
+                // 是否为添加用户操作
                 isAdd: false,
                 // 是否显示添加用户框
                 // 弹出框中form表单label字体的宽度
-                formLabelWidth: '70px'
+                formLabelWidth: '70px',
+                selectUserId: '',
+                isShowRoles: false,
             }
         },
         created() {
             this.getAllUser();
+        },
+        mounted() {
         },
         computed: {
             ...mapGetters([
@@ -204,7 +224,7 @@
         },
         methods: {
             addUser() {
-                this.dialogFormVisible = true;
+                this.editUserInfoDialog = true;
                 this.isAdd = true;
             },
             checkPermit(val) {
@@ -252,10 +272,9 @@
                     } else {
                         this.$utils.messageTips(1000, '是否启动: 更新失败', 'error');
                     }
+                }).catch(err => {
+                    console.log(err);
                 })
-                    .catch(err => {
-                        console.log(err);
-                    })
             },
             handleSelectionChange(val) {
                 console.log(val);
@@ -265,20 +284,19 @@
             editUserInfo(row) {
                 console.log(row.id);
                 //显示弹框
-                this.dialogFormVisible = true;
+                this.editUserInfoDialog = true;
                 findUserById(row.id).then(res => {
                     this.userForm = res.data;
                     this.userForm.sex = this.userForm.sex.toString()
                     console.log('findUserById: ', this.userForm);
                     this.$utils.messageTips(1000, '查询用户成功', 'success');
+                }).catch(err => {
+                    console.log(err);
+                    this.$utils.messageTips(1000, '未找到用户信息', 'error');
                 })
-                    .catch(err => {
-                        console.log(err);
-                        this.$utils.messageTips(1000, '未找到用户信息', 'error');
-                    })
             },
             confirmDialogForm() {
-                this.dialogFormVisible = false;
+                this.editUserInfoDialog = false;
                 if (this.isAdd) {
                     registry(this.userForm).then(res => {
                         this.$utils.messageTips(1000, '添加用户成功', 'success');
@@ -295,10 +313,26 @@
                 }
             },
             cacelDialogForm() {
-                this.dialogFormVisible = false;
+                this.editUserInfoDialog = false;
                 this.userForm = {};
             },
-            // dialogFormVisible = false
+            confirmRoles() {
+                this.isShowRoles = false;
+                console.log('父组件： ', this.$refs.roles.multipleSelection);
+                updateUserRoles(this.selectUserId, this.$refs.roles.multipleSelection).then(res => {
+                    this.$utils.messageTips(1000, '添加角色成功', 'success');
+                    this.getAllUser();
+                    this.$refs.roles.multipleSelection = [];
+                    this.$refs.roles.roleList = [];
+                }).catch(err => console.log(err))
+            },
+            cacelRoles() {
+                this.isShowRoles = false;
+                this.selectUserId = '';
+                this.$refs.roles.multipleSelection = [];
+                this.$refs.roles.roleList = [];
+            },
+            // editUserInfoDialog = false
             // 删除用户
             deleteUserInfo(row) {
                 this.$utils.confirmTips(row.username, '提示').then(() => {
@@ -321,12 +355,10 @@
             pageChange(pageNum) {
                 this.pageParam.pageNum = pageNum;
                 this.getAllUser();
-                console.log('pageChange.pageNum: ', this.pageParam.pageNum);
             },
             sizeChange(currentSize) {
                 this.pageParam.pageSize = currentSize
                 this.getAllUser()
-                console.log('sizeChange.currentSize: ', this.pageParam.pageSize);
             },
             // 分页查询用户
             getAllUser() {
@@ -337,12 +369,18 @@
                     });
                     this.pageParam.pageTotal = res.data.total;
                     this.$utils.messageTips(1000, '获取用户列表success', 'success');
-
-                    console.log("getAllUser.tableData: ", this.userTableData);
-                    console.log("getAllUser.restaurants: ", this.restaurants);
                 }).catch(err => {
                     this.$utils.messageTips(1000, '获取用户列表失败', 'error');
                 })
+            },
+            addRoles(row) {
+                this.selectUserId = row.id;
+                this.isShowRoles = true;
+                // 等待页面加载完成后调用,因为可能存在dialog未加载，先调用下列方法，导致报错：该方法未定义
+                this.$nextTick(() => {
+                    this.$refs.roles.findRolesByUserId();
+                })
+
             },
         }
     }
