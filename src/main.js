@@ -5,6 +5,10 @@ import router from './router'
 import store from './store'
 import './plugins/element.js'
 import 'default-passive-events'
+import FileSaver from 'file-saver';
+import XLSX from 'xlsx';
+
+
 // 此项依赖Vue和Element，一定要在两者之后
 import utils from "./common/utils"
 

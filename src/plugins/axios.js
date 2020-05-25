@@ -77,7 +77,9 @@ _axios.interceptors.response.use(
         return response;
     },
     function (error) {
+        debugger
         // Do something with response error
+        _this.$utils.messageTips(1000, '服务不可用', 'error')
         return Promise.reject(error);
     }
 );

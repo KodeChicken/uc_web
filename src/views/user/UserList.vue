@@ -3,13 +3,15 @@
         <el-row>
             <el-upload
                     class="upload-demo"
-                    action="https://jsonplaceholder.typicode.com/posts/"
+                    action=""
                     :on-preview="handlePreview"
                     :on-remove="handleRemove"
                     :before-remove="beforeRemove"
-                    multiple
-                    :limit="3"
+                    :limit="1"
                     :on-exceed="handleExceed"
+                    accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                    :http-request="uploadFile"
+                    :show-file-list="false"
                     :file-list="fileList">
                 <el-tooltip class="item" effect="dark" content="只能上传excel格式的文件" placement="top-start">
                     <el-button size="mini" type="primary">点击上传</el-button>
@@ -152,10 +154,14 @@
 </template>
 
 <script>
-    import {findAllUser, findUserById, deleteUserById, updateUser, updateUserStatus, updateUserRoles} from "../../js/userList.js"
+    import {
+        findAllUser, findUserById, deleteUserById, updateUser,
+        updateUserStatus, updateUserRoles, uploadUserFile
+    } from "../../js/userList.js"
     import {registry} from "../../js/login";
     import {mapState, mapGetters} from 'vuex'
     import CommonAddRole from "../../components/CommonAddRole";
+    import {importData} from "../../common/excel";
 
     export default {
         components: {
@@ -193,6 +199,11 @@
                 formLabelWidth: '70px',
                 selectUserId: '',
                 isShowRoles: false,
+
+                importHeaders: {
+                    entryType: 'multipart/form-data'
+                },
+
             }
         },
         created() {
@@ -223,6 +234,19 @@
             }
         },
         methods: {
+            uploadFile(item) {
+                // 通过DOM取文件数据
+                importData(item.file, {username: '', password: ''}).then(para => {
+                    uploadUserFile(para).then(res => {
+                        this.$utils.messageTips(1000, '导入用户成功', 'success');
+                        this.fileList = [];
+                        this.getAllUser();
+                    }).catch(err => console.log(err))
+                }).catch(err => console.log(err))
+
+            },
+
+
             addUser() {
                 this.editUserInfoDialog = true;
                 this.isAdd = true;
@@ -331,6 +355,11 @@
                 this.selectUserId = '';
                 this.$refs.roles.multipleSelection = [];
                 this.$refs.roles.roleList = [];
+                this.$refs.roles.pageParam = {
+                    pageNum: 1,
+                    pageSize: 3,
+                    pageTotal: 0
+                };
             },
             // editUserInfoDialog = false
             // 删除用户

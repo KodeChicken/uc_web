@@ -62,7 +62,7 @@
                         }).catch(err => {
                             if (err.code === 607) {
                             }
-                            console.log(err);
+                            this.$utils.messageTips(1000, '服务不可用', 'error');
                         })
                     } else {
                         console.log('error submit!!');

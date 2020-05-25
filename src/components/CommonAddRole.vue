@@ -51,7 +51,6 @@
             return {
                 roleList: [],
                 multipleSelection: [],
-                tempSelect: [],
                 // 分页参数
                 pageParam: {
                     pageNum: 1,

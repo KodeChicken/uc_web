@@ -9,6 +9,9 @@ export const updateUser = userForm => put('/user/update', userForm);
 export const updateUserStatus = (id, status) => put('/user/updateStatus/' + '/' +id + '/' + status);
 export const updateUserRoles = (userId, roleList) => put('/user/updateUserRoles', {userId: userId, roleList: roleList})
 // post 请求
+export const uploadUserFile = item => post('/file/uploadUser', item)
+
+
 // delete 请求
 export const deleteUserById = id => del('/user/delete/' + id);
 
