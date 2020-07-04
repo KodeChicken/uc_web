@@ -10,6 +10,7 @@ export const updateUserStatus = (id, status) => put('/user/updateStatus/' + '/' 
 export const updateUserRoles = (userId, roleList) => put('/user/updateUserRoles', {userId: userId, roleList: roleList})
 // post 请求
 export const uploadUserFile = item => post('/file/uploadUser', item)
+export const exportUserFile = () => get('/file/exportUser')
 
 
 // delete 请求

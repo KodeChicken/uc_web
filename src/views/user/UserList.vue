@@ -18,6 +18,7 @@
                 </el-tooltip>
             </el-upload>
             <el-button class="add-user-class" size="mini" type="primary" @click="addUser">添加用户</el-button>
+            <el-button size="mini" type="primary" @click="exportFile">导入</el-button>
             <el-autocomplete
                     class="inline-input"
                     v-model="userInfo"
@@ -156,12 +157,12 @@
 <script>
     import {
         findAllUser, findUserById, deleteUserById, updateUser,
-        updateUserStatus, updateUserRoles, uploadUserFile
+        updateUserStatus, updateUserRoles, uploadUserFile, exportUserFile
     } from "../../js/userList.js"
     import {registry} from "../../js/login";
     import {mapState, mapGetters} from 'vuex'
     import CommonAddRole from "../../components/CommonAddRole";
-    import {importData} from "../../common/excel";
+    import {importData, exportFile} from "../../common/excel";
 
     export default {
         components: {
@@ -203,6 +204,7 @@
                 importHeaders: {
                     entryType: 'multipart/form-data'
                 },
+                exportList: [],
 
             }
         },
@@ -234,6 +236,24 @@
             }
         },
         methods: {
+            exportFile() {
+                exportUserFile().then(res => {
+                    if (res.code == 200) {
+                        debugger;
+                        this.exportList = res.data;
+                        let fields = {
+                            "username": "姓名",
+                            "password": "密码",
+                            "birthdate": "生日",
+                            "email": "邮箱",
+                            "sex": "性别",
+                            "phone": "手机"
+                        }
+                        let filename = "test"
+                        exportFile(filename, this.exportList, fields);
+                    }
+                }).catch(err => {})
+            },
             uploadFile(item) {
                 // 通过DOM取文件数据
                 importData(item.file, {username: '', password: ''}).then(para => {
